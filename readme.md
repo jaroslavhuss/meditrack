@@ -4,7 +4,7 @@ Aplikace sbírá a zobrazuje data o stavu pacientů.
 
 ## Instalace
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/7SyqFDT-zjM?si=557f_u6ZSGp8iSDH" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Youtube návod](yt.png "YT návod")](https://www.youtube.com/watch?v=7SyqFDT-zjM)
 
 Pro instalaci je potřeba mít nainstalovaný [Node.js](https://nodejs.org/en/)
 
