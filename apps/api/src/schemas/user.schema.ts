@@ -1,0 +1,39 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Exclude } from 'class-transformer';
+import { Document } from 'mongoose';
+import { Roles } from 'src/interfaces_enums/roles.enum';
+
+export type UserDocument = User & Document;
+
+@Schema()
+export class User {
+  /**
+   * MANDATORY PROPS
+   */
+  @Prop()
+  email: string;
+
+  @Exclude()
+  @Prop()
+  password: string;
+
+  @Prop()
+  name: string;
+
+  @Prop()
+  surname: string;
+
+  @Prop({ default: Roles.MedicalRepresentative })
+  authLevel: Roles;
+
+  @Prop({ default: true })
+  isUserApproved: boolean;
+
+  @Prop({ default: new Date() })
+  createdAt: Date;
+
+  @Prop({ default: new Date() })
+  updatedAt: Date;
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
