@@ -36,3 +36,25 @@ Pokud se vyskytnou problémy, můžete vytvořit issue v tomto repozitáři. Tak
 
 Závislosti aplikace jsou zkontrolovány pomocí `npm audit`. Výsledek kontroly je na obrázku níže.
 ![Zranitelnost aplikace](npm_audit.png "Zranitelnost aplikace")
+
+## Licence
+
+MIT Licence
+
+Tento software a přidružené dokumentační soubory (dále jen "Software") jsou poskytovány zdarma každé osobě, která získá kopii tohoto softwaru a přidružených dokumentačních souborů, za podmínek uvedených níže:
+
+Je povoleno používat, kopírovat, upravovat, slučovat, publikovat, distribuovat, sublicencovat a/nebo prodávat kopie tohoto softwaru a povoleno je také povolit osobám, kterým je Software poskytnut, aby tak činily, za předpokladu, že následující podmínky jsou splněny:
+
+Všechny kopie nebo podstatné části tohoto softwaru musí obsahovat výše uvedené autorská práva a toto povolení.
+
+SOFTWARE JE POSKYTOVÁN "TAK JAK JE", BEZ ZÁRUKY JAKÉHOKOLIV DRUHU, VÝSLOVNÉ NEBO PŘEDPOKLÁDANÉ, VČETNĚ, ALE NEJEN, ZÁRUKY OBCHODOVATELNOSTI, VHODNOSTI PRO URČITÝ ÚČEL A NEPORUŠOVÁNÍ AUTORSKÝCH PRÁV. V ŽÁDNÉM PŘÍPADĚ NEBUDE AUTOR NEBO DRŽITEL AUTORSKÝCH PRÁV ODPOVĚDNÝ ZA JAKÉKOLIV NÁROKY, ŠKODY NEBO JINOU ODPOVĚDNOST, BUĎTO V DŮSLEDKU SMLUVNÍHO VZTAHU, DELIKTU NEBO JINAK, VYPLÝVAJÍCÍ Z, NEBO V SOUVISLOSTI S SOFTWAREM NEBO POUŽÍVÁNÍM NEBO JINÝMI ČINNOSTMI V SOUVISLOSTI S SOFTWAREM.
+
+---
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
