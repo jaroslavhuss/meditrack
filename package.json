@@ -6,10 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "turbo run dev",
-    "install": "npm install",
+    "installation": "npm install",
     "build": "turbo run build",
     "finish": "node ./apps/settings/settings.js",
-    "full": "npm run install && npm run build && npm run finish"
+    "full": "npm run installation && npm run build && npm run finish"
   },
   "keywords": [],
   "author": "Jaroslav Huss - jaroslav.huss@gmail.com",
