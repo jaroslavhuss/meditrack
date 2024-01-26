@@ -6,10 +6,10 @@ import { createPatient } from "../APIs/Patients";
 import { setError } from "../store/gsms/errorSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useAuthUser } from "react-auth-kit";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { getAllQuestionnaires } from "../APIs/Questionnaire";
 const CreatePatient = () => {
-  const authUser = useAuthUser();
+  const authUser = useAuthUser() as { user: IPatient };
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [patient, setPatient] = useState<IPatient>(emptyPatient);
@@ -19,7 +19,7 @@ const CreatePatient = () => {
     e.preventDefault();
 
     //@ts-ignore
-    patient.supervisingDoctor = authUser().user._id;
+    patient.supervisingDoctor = authUser.user._id;
     patient.fulltext = `${patient.name} ${patient.surname} ${patient.privateId} ${patient.email}`;
 
     //validate name, surname and private ID - email can be empty

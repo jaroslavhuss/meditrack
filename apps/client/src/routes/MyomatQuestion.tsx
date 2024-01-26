@@ -4,33 +4,32 @@ import { emptyMyomatosys } from "../Entities/defaults/myomatosys.empty";
 import { IMyomatosys } from "../Entities/interfaces/myomatosys.interface";
 import FormInputRange from "../components/GlobalComponents/FormInputRange";
 import { createMyomsQuestionnaire } from "../APIs/Users";
-import { useAuthUser, useAuthHeader } from "react-auth-kit";
 import { IUser } from "../Entities/interfaces/user.interface";
 import { emptyUser } from "../Entities/defaults/user.empty";
 import { useDispatch } from "react-redux";
 import { setSuccess } from "../store/gsms/successSlice";
 import { setError } from "../store/gsms/errorSlice";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 interface Props {}
 
 const MyomatosysQuestionnaire: React.FC<Props> = ({}) => {
-    const dispatch = useDispatch();
-    const [user, setUser] = useState<IUser>(emptyUser);
-    const [authToken, setAuthToken] = useState("")
-    const auth = useAuthUser();
-    const authState = auth();
-    const header = useAuthHeader();
-    const token = header();
-   
+  const dispatch = useDispatch();
+  const [user, setUser] = useState<IUser>(emptyUser);
+  const [authToken, setAuthToken] = useState("");
+  const authState = useAuthUser() as { user: IUser };
 
-    useEffect(() => {
-      if (authState) {
-        setUser(authState.user);
-      }
+  const token = useAuthHeader();
 
-      if(token){
-        setAuthToken(token)
-      }
-    }, [authState, token]);
+  useEffect(() => {
+    if (authState) {
+      setUser(authState.user);
+    }
+
+    if (token) {
+      setAuthToken(token);
+    }
+  }, [authState, token]);
   const [myomatosysAnswers, setMyomatosysAnswers] =
     useState<IMyomatosys>(emptyMyomatosys);
 
@@ -60,32 +59,39 @@ const MyomatosysQuestionnaire: React.FC<Props> = ({}) => {
     myomatosysAnswers.__10Question,
   ]);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        myomatosysAnswers.supervisorDoctor = user._id;
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    myomatosysAnswers.supervisorDoctor = user._id;
 
-        const rodcisloPattern = /^\d{6}\d{4}$/;
-        if(!rodcisloPattern.test(myomatosysAnswers.pacientSSN)){
-            dispatch(setError({
-                message: "Rodné číslo není ve správném formátu!",
-                rawData:"Rodné číslo bez lomítka a ve formátu 0000000000!"
-            }))
-            return;
-        }
-
-
-        const data = await createMyomsQuestionnaire(myomatosysAnswers, authToken, "/myom");
-
-
-      if(data){
-        dispatch(setSuccess({
-            message: "Dotazník byl úspěšně odeslán!",
-            rawData:"Gratulujeme, dotazník byl úspěšně odeslán a naleznete ho v sekci 'Moje dotazníky'!"
-        }))
-
-        setMyomatosysAnswers(emptyMyomatosys)
-      } 
+    const rodcisloPattern = /^\d{6}\d{4}$/;
+    if (!rodcisloPattern.test(myomatosysAnswers.pacientSSN)) {
+      dispatch(
+        setError({
+          message: "Rodné číslo není ve správném formátu!",
+          rawData: "Rodné číslo bez lomítka a ve formátu 0000000000!",
+        })
+      );
+      return;
     }
+
+    const data = await createMyomsQuestionnaire(
+      myomatosysAnswers,
+      authToken,
+      "/myom"
+    );
+
+    if (data) {
+      dispatch(
+        setSuccess({
+          message: "Dotazník byl úspěšně odeslán!",
+          rawData:
+            "Gratulujeme, dotazník byl úspěšně odeslán a naleznete ho v sekci 'Moje dotazníky'!",
+        })
+      );
+
+      setMyomatosysAnswers(emptyMyomatosys);
+    }
+  };
   return (
     <MainLayout>
       <div className="flex flex-col w-full p-2">
@@ -101,8 +107,9 @@ const MyomatosysQuestionnaire: React.FC<Props> = ({}) => {
           <li>10 = maximální míra příznaku</li>
         </ul>
         <p>Číselnou hodnotu odpovídající Vámi vnímané míře příznaku označte</p>
-        <form className="relative self-center bg-white p-4 rounded-xl mt-10 bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 shadow-2xl"
-        onSubmit={handleSubmit}
+        <form
+          className="relative self-center bg-white p-4 rounded-xl mt-10 bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 shadow-2xl"
+          onSubmit={handleSubmit}
         >
           <div
             className={`sticky top-1/2 left-0 -ml-20 p-4 text-white inline-block rounded-lg floating ${

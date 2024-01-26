@@ -4,8 +4,10 @@ import { Link } from "react-router-dom";
 import { IErrorGlobalState } from "../../store/store";
 import { AiFillWarning, AiOutlineCloseCircle } from "react-icons/ai";
 import Error from "./Error";
-import { useIsAuthenticated, useSignOut } from "react-auth-kit";
-import { BsDoorClosedFill } from "react-icons/bs";
+
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
+import useSignOut from "react-auth-kit/hooks/useSignOut";
+import { BsDoorClosedFill, BsHouseDashFill } from "react-icons/bs";
 import Logo from "../../assets/logo.png";
 interface Props {}
 
@@ -23,7 +25,7 @@ const Navigation: React.FC<Props> = () => {
     }
   }, [errorList.errorMessages.length]);
   return (
-    <div className="mx-auto max-w-7xl lg:border-b-2 xl:border-b-2 md:border-b-2 sticky top-0 z-50 bg-white">
+    <div className="mx-auto max-w-7xl lg:border-b-2 xl:border-b-2 md:border-b-2 top-0 z-50 bg-white">
       <div className="navbar">
         <div className="navbar-start">
           <div className="dropdown">
@@ -50,7 +52,10 @@ const Navigation: React.FC<Props> = () => {
               {isAuthenticated() && (
                 <span
                   className="bg-orange-500 text-white p-2 text-center flex flex-row justify-center items-center font-bold rounded-lg hover:cursor-pointer"
-                  onClick={signOut}
+                  onClick={() => {
+                    signOut();
+                    window.location.reload();
+                  }}
                 >
                   <BsDoorClosedFill />
                   Odhlášení
@@ -71,19 +76,22 @@ const Navigation: React.FC<Props> = () => {
           </div>
           <Link
             to="/"
-            className="normal-case text-xl flex flex-row justify-center items-center font-bold"
+            className="normal-case text-xl flex flex-row justify-center items-center font-bold ml-5 md:ml-0"
           >
             <img src={Logo} alt="logo" width={50} /> HealthTracker
           </Link>
         </div>
-        <div className="navbar-center hidden lg:flex">
+        <div className="hidden lg:flex navbar-end">
           {isAuthenticated() && (
             <span
-              className="bg-orange-500 text-white p-2 text-center flex flex-row justify-center items-center font-bold rounded-lg hover:cursor-pointer"
-              onClick={signOut}
+              className="bg-red-800 text-white p-2 text-center flex flex-row justify-center items-center font-bold rounded-lg hover:cursor-pointer"
+              onClick={() => {
+                signOut();
+                window.location.reload();
+              }}
             >
-              <BsDoorClosedFill />
-              Odhlášení
+              <BsHouseDashFill />
+              <span className="ml-2">Odhlášení</span>
             </span>
           )}
           <ul className="menu menu-horizontal px-1">

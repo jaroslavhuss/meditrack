@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useAuthHeader } from "react-auth-kit";
 import { getTokensExpiration } from "../../APIs/Users";
 import { useJwt } from "react-jwt";
-import { useSignOut } from "react-auth-kit";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import useSignOut from "react-auth-kit/hooks/useSignOut";
 interface Props {}
 
 const Footer: React.FC<Props> = () => {
   const signOut = useSignOut();
   const header = useAuthHeader();
-  const token = header();
   const [expirace, setExpirace] = useState<string>("");
-  const { decodedToken } = useJwt(token);
+  const { decodedToken } = useJwt(header || "");
   let timerId: NodeJS.Timeout;
 
   useEffect(() => {
     const checkTokenExpiration = async () => {
       clearTimeout(timerId);
-      if (token) {
-        const data = await getTokensExpiration(`/auth/expiration/`, token);
+      if (header && header.length > 0) {
+        const data = await getTokensExpiration(`/auth/expiration/`, header);
 
         setExpirace(data);
 
@@ -36,7 +35,7 @@ const Footer: React.FC<Props> = () => {
       // Clear the timeout when the component unmounts
       clearTimeout(timerId);
     };
-  }, [token]);
+  }, [header]);
 
   useEffect(() => {
     // Remove previous interval and token when a new token is generated

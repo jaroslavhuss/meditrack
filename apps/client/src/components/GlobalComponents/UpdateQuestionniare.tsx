@@ -115,7 +115,7 @@ const UpdateQuestionnaire: FC = () => {
         <h1 className="text-2xl my-2 font-bold text-purple-700">
           Správa dotazníku: {questionnaire.name}
         </h1>
-        <span className="text-sm">{id && id}</span>
+
         <hr />
         <form
           // onSubmit={handleFormSubmit}

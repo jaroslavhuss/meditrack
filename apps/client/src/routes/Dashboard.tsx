@@ -15,7 +15,7 @@ interface Props {}
 const Dashboard: FC<Props> = ({}) => {
   return (
     <MainLayout>
-      <div className="grid gap-2 grid-cols-12 justify-center align-middle">
+      <div className="grid gap-2 grid-cols-1 md:grid-cols-12 justify-center align-middle">
         <div className="group card bg-base-100 shadow-xl col-span-3 hover:shadow-xl transition-all duration-700 hover:bg-slate-200 hover:cursor-pointer">
           <Link to="/questionnaire/create">
             <div className="card-body block mx-auto">

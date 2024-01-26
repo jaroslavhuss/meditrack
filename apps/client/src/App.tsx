@@ -9,7 +9,7 @@ import Dashboard from "./routes/Dashboard";
 import { Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ISuccessGlobalState } from "./store/store";
-import { RequireAuth, useIsAuthenticated } from "react-auth-kit";
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 import CreateQuestionnaire from "./routes/CreateQuestionnaire";
 import GetQuestionnaires from "./routes/GetQuestionnaires";
 import UpdateQuestionnaire from "./components/GlobalComponents/UpdateQuestionniare";
@@ -19,6 +19,7 @@ import PatientDetail from "./routes/PatientDetail";
 import CreateQuestionnaireByPatient from "./routes/CreateQuestionnaireByPatient";
 import Settings from "./routes/Settings";
 import Export from "./routes/Export";
+import AuthOutlet from "@auth-kit/react-router/AuthOutlet";
 
 export default function App() {
   const isAuthenticated = useIsAuthenticated();
@@ -35,102 +36,39 @@ export default function App() {
         <Routes>
           {!isAuthenticated() ? (
             <>
-              <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="*" element={<Login />} />
             </>
           ) : (
-            <>
-              <Route
-                path="/"
-                element={
-                  <RequireAuth loginPath="/login">
-                    <Dashboard />
-                  </RequireAuth>
-                }
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  <RequireAuth loginPath="/login">
-                    <Dashboard />
-                  </RequireAuth>
-                }
-              />
+            <Route element={<AuthOutlet fallbackPath="/login" />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route
                 path="/questionnaire/create"
-                element={
-                  <RequireAuth loginPath="/login">
-                    <CreateQuestionnaire />
-                  </RequireAuth>
-                }
+                element={<CreateQuestionnaire />}
               />
               <Route
                 path="/questionnaire/get"
-                element={
-                  <RequireAuth loginPath="/login">
-                    <GetQuestionnaires />
-                  </RequireAuth>
-                }
+                element={<GetQuestionnaires />}
               />
+
               <Route
                 path="/questionnaire/:id"
-                element={
-                  <RequireAuth loginPath="/login">
-                    <UpdateQuestionnaire />
-                  </RequireAuth>
-                }
+                element={<UpdateQuestionnaire />}
               />
-              <Route
-                path="/patient/create"
-                element={
-                  <RequireAuth loginPath="/login">
-                    <CreatePatient />
-                  </RequireAuth>
-                }
-              />
-              <Route
-                path="/patient/get"
-                element={
-                  <RequireAuth loginPath="/login">
-                    <GetPatients />
-                  </RequireAuth>
-                }
-              />
-              <Route
-                path="/patient/:id"
-                element={
-                  <RequireAuth loginPath="/login">
-                    <PatientDetail />
-                  </RequireAuth>
-                }
-              />
+
+              <Route path="/patient/create" element={<CreatePatient />} />
+              <Route path="/patient/get" element={<GetPatients />} />
+              <Route path="/patient/:id" element={<PatientDetail />} />
               <Route
                 path="/patient/:id/questionnaire/:questionnaireId/create"
-                element={
-                  <RequireAuth loginPath="/login">
-                    <CreateQuestionnaireByPatient />
-                  </RequireAuth>
-                }
+                element={<CreateQuestionnaireByPatient />}
               />
-              <Route
-                path="/settings"
-                element={
-                  <RequireAuth loginPath="/login">
-                    <Settings />
-                  </RequireAuth>
-                }
-              />
-              <Route
-                path="/export"
-                element={
-                  <RequireAuth loginPath="/login">
-                    <Export />
-                  </RequireAuth>
-                }
-              />
-            </>
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/export" element={<Export />} />
+              <Route path="*" element={<Dashboard />} />
+            </Route>
           )}
         </Routes>
         {showSuccess && <Success />}

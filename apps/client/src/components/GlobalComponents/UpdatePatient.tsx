@@ -3,7 +3,7 @@ import { emptyPatient } from "../../Entities/defaults/patient.empty";
 import { IPatient } from "../../Entities/interfaces/patient.interface";
 import { setError } from "../../store/gsms/errorSlice";
 import { useDispatch } from "react-redux";
-import { useAuthUser } from "react-auth-kit";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { getAllQuestionnaires } from "../../APIs/Questionnaire";
 import { BsLockFill } from "react-icons/bs";
 import { IQuestionnaire } from "../../Entities/interfaces/questionnaire.interface";
@@ -12,7 +12,7 @@ interface Props {
   updatedPatient: (p: IPatient) => void;
 }
 const UpdatePatient: FC<Props> = ({ updateablePatient, updatedPatient }) => {
-  const authUser = useAuthUser();
+  const authUser = useAuthUser() as { user: IPatient };
   const dispatch = useDispatch();
   const [patient, setPatient] = useState<IPatient>(
     updateablePatient || emptyPatient
@@ -24,8 +24,8 @@ const UpdatePatient: FC<Props> = ({ updateablePatient, updatedPatient }) => {
     e.preventDefault();
 
     if (isUpdateDisabled) return;
-    //@ts-ignore
-    patient.supervisingDoctor = authUser().user._id;
+
+    patient.supervisingDoctor = authUser.user._id;
     patient.fulltext = `${patient.name} ${patient.surname} ${patient.privateId} ${patient.email}`;
 
     //validate name, surname and private ID - email can be empty
@@ -72,15 +72,12 @@ const UpdatePatient: FC<Props> = ({ updateablePatient, updatedPatient }) => {
     patient.assignedQuestionnaires = arrayOfAssignedQuestionnaires;
     setIsUpdateDisabled(true);
     updatedPatient(patient);
-    // setPatient(emptyPatient);
-    // createPatient(patient);
-    // navigate("/patient/get");
   };
 
   useEffect(() => {
     (async () => {
       const data = await getAllQuestionnaires();
-      console.log(data);
+
       setAvailableQuestionnaires(data);
     })();
   }, []);

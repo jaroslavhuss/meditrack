@@ -7,7 +7,8 @@ import { emptyLoginFormData } from "../Entities/defaults/login.empty";
 import { loginUser } from "../APIs/Users";
 import { isEmailValid, isPasswordValid } from "../utils/InputValidations";
 import { setError } from "../store/gsms/errorSlice";
-import { useSignIn } from "react-auth-kit";
+
+import useSignIn from "react-auth-kit/hooks/useSignIn";
 
 interface Props {}
 
@@ -56,15 +57,17 @@ const Login: React.FC<Props> = () => {
     const response = await loginUser(formData);
     if (response) {
       signIn({
-        token: response.tokens.access_token,
-        expiresIn: 3600,
-        tokenType: "Bearer",
-        authState: { user: response.user },
+        auth: {
+          token: response.tokens.access_token,
+          type: "Bearer",
+        },
+        userState: { user: response.user },
       });
 
       localStorage.setItem("token", "Bearer " + response.tokens.access_token);
 
       navigate("/dashboard");
+      window.location.reload();
     }
   };
   return (
