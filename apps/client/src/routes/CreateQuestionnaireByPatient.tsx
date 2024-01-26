@@ -23,11 +23,20 @@ const CreateQuestionnaireByPatient = () => {
     [key: string]: number;
   }>();
 
+  const generateDefaultRange = (questionnaire: IQuestionnaire) => {
+    const defaultValuesForQuestionAndAnswers: { [key: string]: number } = {};
+    questionnaire.questions.forEach((question) => {
+      defaultValuesForQuestionAndAnswers[question] = 0;
+    });
+    setQuestionAndAnswers(defaultValuesForQuestionAndAnswers);
+  };
+
   useEffect(() => {
     (async () => {
       if (!questionnaireId) return;
 
-      const data = await getQuestionnaireById(questionnaireId);
+      const data: IQuestionnaire = await getQuestionnaireById(questionnaireId);
+      generateDefaultRange(data);
 
       setQuestionnaire(data);
     })();
@@ -96,7 +105,7 @@ const CreateQuestionnaireByPatient = () => {
         <BsArrowLeftSquareFill className="text-4xl text-blue-600 my-2" />{" "}
         <span>Zpět</span>
       </Link>
-      {id} - {questionnaireId}
+
       {
         //@ts-ignore
         questionnaire && (

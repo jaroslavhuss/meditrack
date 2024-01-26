@@ -49,7 +49,7 @@ const Footer: React.FC<Props> = () => {
         <div className="grid grid-cols-2 text-center">
           <div className="col-span-1">
             {" "}
-            {new Date().getFullYear()} © HealthTracker
+            {new Date().getFullYear()} © MediTrack
           </div>
           {expirace && parseInt(expirace) > 0 && (
             <div className="col-span-1">

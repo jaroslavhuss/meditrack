@@ -8,7 +8,7 @@ import {
 } from "../Entities/interfaces/patient.interface";
 import { getPatientById, updatePatientById } from "../APIs/Patients";
 import { IQuestionnaire } from "../Entities/interfaces/questionnaireDocument.interface";
-import { BsPlusCircle, BsTrash2Fill } from "react-icons/bs";
+import { BsPlusCircle, BsTrash2Fill, BsFileEarmark } from "react-icons/bs";
 import UpdatePatient from "../components/GlobalComponents/UpdatePatient";
 import { LineChart } from "@mui/x-charts";
 interface IAggregatedQuestionnaire {
@@ -130,6 +130,35 @@ const PatientDetail = () => {
       key: key,
       maxrange: maxrange,
     });
+  };
+
+  const copyRowData = async (data: IQuestionsDoneByPatient) => {
+    window.alert(
+      "Data byla zkopírována do schránky - pomocí CTRL + V můžete data vložit do Excelu."
+    );
+    const objectToValidTableHTML = (obj: any) => {
+      let table = `<table><thead><tr><th>Datum vyplnění</th><th>Součet</th>`;
+      obj.questionsAndAnswers.forEach((question: any) => {
+        table += `<th>${question.question}</th>`;
+      });
+      table += `</tr></thead><tbody><tr><td>${new Date(
+        obj.createdAt
+      ).toLocaleDateString()}</td><td>${obj.sum}</td>`;
+      obj.questionsAndAnswers.forEach((question: any) => {
+        table += `<td>${question.answer}</td>`;
+      });
+      table += `</tr></tbody></table>`;
+      return table;
+    };
+
+    const table = objectToValidTableHTML(data);
+
+    //open table in a new window
+    const newWindow = window.open();
+
+    newWindow?.document.write(table);
+    newWindow?.navigator.clipboard.writeText(table);
+    newWindow?.document.close();
   };
 
   return (
@@ -274,7 +303,7 @@ const PatientDetail = () => {
                                     )}
 
                                     {QUEST.sum !== undefined ? (
-                                      <td className="bg-green-100 font-bold">
+                                      <td className="bg-green-100 font-bold text-lg">
                                         {QUEST.sum || QUEST.sum === 0}
                                       </td>
                                     ) : (
@@ -287,30 +316,48 @@ const PatientDetail = () => {
                                       QUEST.questionsAndAnswers.map(
                                         (questionnaire: any, index: number) => (
                                           <td
-                                            className="border px-4 py-2 text-sm"
+                                            className="border px-4 py-2 text-lg"
                                             key={index}
                                           >
                                             {questionnaire.answer}
                                           </td>
                                         )
                                       )}
-                                    <td
-                                      className="group"
-                                      onClick={() => {
-                                        //Console.log current data inside of QUEST
-                                        const filteredData =
-                                          //@ts-ignore
-                                          patient.questionnairesDoneByPatient.filter(
-                                            (questionnaire) =>
-                                              questionnaire !== QUEST
-                                          );
+                                    <td className="grid grid-cols-2 gap-2 justify-center align-middle m-1">
+                                      <div
+                                        className="w-full h-full border-r-2"
+                                        onClick={() => {
+                                          copyRowData(QUEST);
+                                        }}
+                                      >
+                                        {" "}
+                                        <BsFileEarmark className="text-xl mx-auto hover:text-red-300" />
+                                        <span className=" text-[8px] uppercase text-slate-800 font-bold">
+                                          kopírovat
+                                        </span>
+                                      </div>
+                                      <div
+                                        className="w-full h-full "
+                                        onClick={() => {
+                                          //Console.log current data inside of QUEST
+                                          const filteredData =
+                                            //@ts-ignore
+                                            patient.questionnairesDoneByPatient.filter(
+                                              (questionnaire) =>
+                                                questionnaire !== QUEST
+                                            );
 
-                                        deleteQuestionnaireDoneByPatient(
-                                          filteredData
-                                        );
-                                      }}
-                                    >
-                                      <BsTrash2Fill className="text-xl mx-auto group-hover:text-red-300" />
+                                          deleteQuestionnaireDoneByPatient(
+                                            filteredData
+                                          );
+                                        }}
+                                      >
+                                        {" "}
+                                        <BsTrash2Fill className="text-xl mx-auto hover:text-red-300" />
+                                        <span className=" text-[8px] uppercase text-slate-800 font-bold">
+                                          smazat
+                                        </span>
+                                      </div>
                                     </td>
                                   </tr>
                                 )

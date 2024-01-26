@@ -78,7 +78,7 @@ const Navigation: React.FC<Props> = () => {
             to="/"
             className="normal-case text-xl flex flex-row justify-center items-center font-bold ml-5 md:ml-0"
           >
-            <img src={Logo} alt="logo" width={50} /> HealthTracker
+            <img src={Logo} alt="logo" width={50} /> MediTrack
           </Link>
         </div>
         <div className="hidden lg:flex navbar-end">

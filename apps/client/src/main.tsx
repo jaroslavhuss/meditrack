@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
 import AuthProvider from "react-auth-kit";
 import createStore from "react-auth-kit/createStore";
-const authStore = createStore({
+const authStore: any = createStore({
   authName: "_auth",
   authType: "cookie",
   cookieDomain: window.location.hostname,
@@ -16,9 +16,6 @@ const authStore = createStore({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
-      {
-        //@ts-ignore
-      }
       <AuthProvider store={authStore}>
         <BrowserRouter>
           <App />
