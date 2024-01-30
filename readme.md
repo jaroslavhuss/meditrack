@@ -2,31 +2,36 @@
 
 Aplikace sbírá a zobrazuje data o stavu pacientů.
 
+## Požadavky před instalací
+
+1. Pro instalaci je potřeba mít nainstalovaný [Node.js](https://nodejs.org/en/)
+2. Aplikace používá dokumentovou databázi MongoDB. MongoDB lze mít nainstalovaný lokálně (https://www.mongodb.com/docs/manual/installation/) nebo pomocí Dockeru (https://hub.docker.com/_/mongo/)
+
 ## Instalace
 
-[![Youtube návod](yt.png "YT návod")](https://www.youtube.com/watch?v=7SyqFDT-zjM)
-
-Pro instalaci je potřeba mít nainstalovaný [Node.js](https://nodejs.org/en/)
-
 1. Stáhněte si zdrojové kódy pomocí `git clone https://github.com/jaroslavhuss/healthtracker` nebo si stáhněte zip soubor z [Repozitáře](https://github.com/jaroslavhuss/healthtracker)
-2. V kořenovém adresáři nainstalujte závislosti pro aplikační logiku i front-end pomocí `npm install`
-3. Aplikace používá dokumentovou databázi MongoDB. MongoDB lze mít nainstalovaný lokálně (https://www.mongodb.com/docs/manual/installation/), pomocí Dockeru (https://hub.docker.com/_/mongo/) a nebo pomocí MongoAtlas, kde si lze vytvořit databázi zdarma (https://www.mongodb.com/cloud/atlas). **Upozorňuji, že sdílení pacientských dat s cloudovou verzi MongoAtlas je z hlediska GDPR problematické.**
-4. Do složky aplikace ` apps/api/` je potřeba přidat soubor .env, který obsahuje základní nastavení instance aplikace. Příklad souboru ` apps/api/.env` je níže.
+2. Přejděte do složky /apps/settings a zde vytvořte soubor .env s následujícím obsahem:
 
 ```bash
-JWT_SECRET = 5f4dcc3b5aa765d61d8327deb882cf99
-JWT_REFRESH_SECRET = 5f4dcc3b5aa765d61d8327deb882cf99
-JWT_EXPIRE = 120min
-JWT_EXPIRE_REFRESH = 7d
-DATABASE_URL = mongodb://localhost:27017/myoms
-PORT = 5006
+JWT_SECRET = 5f4dcc3b5aa765d61d8327deb882cf99 # Toto je pouze příklad, prosím změňte hodnotu
+JWT_REFRESH_SECRET = 5f4dcc3b5aa765d61d8327deb882cf99 # Toto je pouze příklad, prosím změňte hodnotu
+JWT_EXPIRE = 120min # Zde můžete nastavit, jak dlouho zůstane uživatel přihlášený
+JWT_EXPIRE_REFRESH = 7d # Zde můžete nastavit, jak dlouho zůstane uživatel přihlášený po obnovení tokenu
+DATABASE_URL = mongodb://localhost:27017/myoms # Zde můžete nastavit URL pro připojení k MongoDB, jedná se o příklad a je potřeba nastavit silné heslo
+PORT = 5006 # Zde můžete nastavit port, na kterém bude aplikace běžet. Defaultně bude aplikace dostupná na http://localhost:5006
 ```
 
 Berte prosím za nesmírně důležité změnu hodnot u JWT_SECRET a JWT_REFRESH_SECRET. Tyto hodnoty jsou použity pro šifrování a dešifrování JWT tokenů. Hodnoty můžete vygenerovat pomocí `openssl rand -hex 40`.
 
-### Spuštění produkční verze
+3. Vraťte se zpět do kořenové složky a aplikaci sestavte pomocí `npm run full`
 
-Na produkčním spouštění verze se pracuje.
+- Pokud se vyskytnou nějaké potíže s `npm run full`, postupujte následovně:
+  - `npm run installation`
+  - `npm run build`
+  - `npm run finish`
+
+4. Přejděte do složky se sestavenou aplikací `cd ./apps/api/dist/src`
+5. Spusťte aplikaci pomocí `node main.js` nebo ideální pomocí [PM2](https://pm2.keymetrics.io/) - `pm2 start main.js --name healthtracker:5006`
 
 ## Pokud se vyskytnou problémy
 
