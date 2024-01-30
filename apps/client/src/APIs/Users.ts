@@ -57,6 +57,47 @@ export const loginUser = async (userData: ILoginFormData) => {
   }
 };
 
+export const updateUser = async (userData: IUser) => {
+  const token = localStorage.getItem("token");
+  try {
+    if (!token) {
+      store.dispatch(
+        setError({
+          message: "Něco je v nepořádku s Vaším přihlášením",
+          rawData: "Odhlašte se a přihlašte znovu",
+        })
+      );
+
+      return;
+    }
+    const response: Response = await fetch(
+      `${GLOBAL_URL}/auth/udpate/${userData._id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify(userData),
+      }
+    );
+
+    const data = await response.json();
+
+    store.dispatch(
+      setSuccess({
+        message:
+          "Museli jsme Vás odhlásit, abychom mohli provést změny - přihlašte se prosím znovu",
+        rawData: data,
+      })
+    );
+    return data;
+  } catch (error: any) {
+    const errorMessage = formatErrorMessage(error);
+    store.dispatch(setError(errorMessage));
+  }
+};
+
 export const createMyomsQuestionnaire = async (
   myomData: IMyomatosys,
   token: string,
@@ -224,6 +265,76 @@ export const getUserById = async (id: string) => {
 
     const data = await response.json();
 
+    return data;
+  } catch (error: any) {
+    const errorMessage = formatErrorMessage(error);
+    store.dispatch(setError(errorMessage));
+  }
+};
+
+export const startPasswordReset = async (email: string) => {
+  try {
+    const response: Response = await fetch(
+      GLOBAL_URL + "/auth/password-reset",
+      {
+        method: "POST",
+        body: JSON.stringify({ email: email }),
+      }
+    );
+
+    const data = await response.json();
+
+    console.log(data);
+    return data;
+  } catch (error: any) {
+    const errorMessage = formatErrorMessage(error);
+    store.dispatch(setError(errorMessage));
+  }
+};
+
+export const validateSecurityAnswers = async (
+  email: string,
+  securityAnswer1: string,
+  securityAnswer2: string
+) => {
+  try {
+    const response: Response = await fetch(
+      GLOBAL_URL + "/auth/password-reset/validate",
+      {
+        method: "POST",
+        body: JSON.stringify({ email, securityAnswer1, securityAnswer2 }),
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    const errorMessage = formatErrorMessage(error);
+    store.dispatch(setError(errorMessage));
+  }
+};
+
+export const resetPassword = async (
+  email: string,
+  securityAnswer1: string,
+  securityAnswer2: string,
+  newPassword: string,
+  confirmedNewPassword: string
+) => {
+  try {
+    const response: Response = await fetch(
+      GLOBAL_URL + "/auth/password-reset/reset",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          securityAnswer1,
+          securityAnswer2,
+          newPassword,
+          confirmedNewPassword,
+        }),
+      }
+    );
+    const data = await response.json();
     return data;
   } catch (error: any) {
     const errorMessage = formatErrorMessage(error);

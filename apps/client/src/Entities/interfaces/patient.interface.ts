@@ -23,4 +23,7 @@ export interface IPatient {
   assignedQuestionnaires?: IQuestionnaire[];
   createdAt?: Date;
   supervisingDoctor: string;
+  oldPassword?: string;
+  newPassword?: string;
+  confirmedNewPassword?: string;
 }

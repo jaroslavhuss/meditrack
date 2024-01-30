@@ -3,7 +3,15 @@ import {
   BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
-import { SignUpDto, AuthDto, UserIdDto } from './dto';
+import {
+  SignUpDto,
+  AuthDto,
+  UserIdDto,
+  UpdateUserDto,
+  ForgotPasswordDto_checkEmail,
+  CheckSecurityAnswersDto,
+  ResetPasswordDto,
+} from './dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -26,9 +34,38 @@ export class AuthService {
     return user;
   }
 
-  async updateSelf(id: string, dto: any): Promise<any> {
-    const user = await this.userModel.findByIdAndUpdate(id, dto, { new: true });
-    return user;
+  async updateSelf(id: string, dto: UpdateUserDto): Promise<any> {
+    const user = await this.userModel.findById(id);
+    if (!user) throw new BadRequestException('Uživatel neexistuje');
+
+    if (dto.newPassword && dto.oldPassword && dto.confirmedNewPassword) {
+      const passwordMatch: boolean = await argon.verify(
+        user.password,
+        dto.oldPassword,
+      );
+
+      if (!passwordMatch) throw new BadRequestException('Špatné heslo');
+
+      if (dto.newPassword !== dto.confirmedNewPassword)
+        throw new BadRequestException('Hesla se neshodují');
+
+      const hashedPwd = await argon.hash(dto.newPassword);
+
+      const updatedUser = await this.userModel.findByIdAndUpdate(
+        id,
+        { password: hashedPwd, name: dto.name, email: dto.email },
+        { new: true },
+      );
+
+      return updatedUser;
+    } else {
+      const updatedUser = await this.userModel.findByIdAndUpdate(
+        id,
+        { name: dto.name, email: dto.email },
+        { new: true },
+      );
+      return updatedUser;
+    }
   }
 
   async signup(dto: SignUpDto): Promise<any> {
@@ -50,6 +87,10 @@ export class AuthService {
       password: hashedPwd,
       email: dto.email,
       name: dto.name,
+      securityAnswer1: dto.securityAnswer1,
+      securityAnswer2: dto.securityAnswer2,
+      securityQuestion1: dto.securityQuestion1,
+      securityQuestion2: dto.securityQuestion2,
     });
 
     return user;
@@ -61,14 +102,14 @@ export class AuthService {
       email: dto.email,
     });
 
-    if (!user) throw new ForbiddenException('This user does not exists');
+    if (!user) throw new ForbiddenException('Tento uživatel neexistuje');
 
     //compare passwords
     const passwordMatch: boolean = await argon.verify(
       user.password,
       dto.password,
     );
-    if (!passwordMatch) throw new BadRequestException('Wrong password');
+    if (!passwordMatch) throw new BadRequestException('Špatné heslo');
     const tokens = await this.signToken(user._id, user.email, user.authLevel);
     await this.userModel.findOneAndUpdate(
       { _id: user.id },
@@ -97,7 +138,7 @@ export class AuthService {
     );
     if (!user)
       throw new BadRequestException(
-        'User could not be logged off since it does not exist',
+        'Tento uživatele neexistuje, nebo se nepodařilo odhlásit',
       );
     delete user.password;
     return user;
@@ -151,5 +192,76 @@ export class AuthService {
       // You can handle this error based on your application's needs
     }
     return null; // Token is invalid or doesn't contain expiration
+  }
+
+  async startPasswordReset(dto: ForgotPasswordDto_checkEmail): Promise<{
+    email: string;
+    securityQuestion1: string;
+    securityQuestion2: string;
+  }> {
+    const user = await this.userModel.findOne({ email: dto.email });
+    if (!user) throw new BadRequestException('Uživatel neexistuje');
+
+    if (!user.securityQuestion1 || !user.securityQuestion2)
+      throw new BadRequestException(
+        'Uživatel nemá nastavené bezpečnostní otázky',
+      );
+
+    return {
+      email: user.email,
+      securityQuestion1: user.securityQuestion1,
+      securityQuestion2: user.securityQuestion2,
+    };
+  }
+
+  async validateSecurityAnswers(dto: CheckSecurityAnswersDto): Promise<User> {
+    const user = await this.userModel.findOne({ email: dto.email });
+
+    if (!user) throw new BadRequestException('Uživatel neexistuje');
+
+    if (!user.securityQuestion1 || !user.securityQuestion2)
+      throw new BadRequestException(
+        'Uživatel nemá nastavené bezpečnostní otázky',
+      );
+
+    if (
+      user.securityAnswer1 !== dto.securityAnswer1 ||
+      user.securityAnswer2 !== dto.securityAnswer2
+    )
+      throw new BadRequestException(
+        'Špatné odpovědi na bezpečnostní otázky. Je nám líto, ale musíte kontaktovat svého správce aplikace pro obnovení hesla.',
+      );
+
+    return user;
+  }
+
+  async resetPassword(dto: ResetPasswordDto): Promise<any> {
+    const user = await this.userModel.findOne({ email: dto.email });
+    if (!user) throw new BadRequestException('Uživatel neexistuje');
+    if (!user.securityQuestion1 || !user.securityQuestion2)
+      throw new BadRequestException(
+        'Uživatel nemá nastavené bezpečnostní otázky',
+      );
+
+    if (
+      user.securityAnswer1 !== dto.securityAnswer1 ||
+      user.securityAnswer2 !== dto.securityAnswer2
+    )
+      throw new BadRequestException(
+        'Špatné odpovědi na bezpečnostní otázky. Je nám líto, ale musíte kontaktovat svého správce aplikace pro obnovení hesla.',
+      );
+
+    if (dto.newPassword !== dto.confirmedNewPassword)
+      throw new BadRequestException('Hesla se neshodují');
+
+    const hashedPwd = await argon.hash(dto.newPassword);
+
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      user.id,
+      { password: hashedPwd },
+      { new: true },
+    );
+
+    return updatedUser;
   }
 }

@@ -8,4 +8,7 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
   isUserApproved: boolean;
+  oldPassword: string;
+  newPassword: string;
+  confirmedNewPassword: string;
 } //

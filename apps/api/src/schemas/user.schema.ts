@@ -34,6 +34,18 @@ export class User {
 
   @Prop({ default: new Date() })
   updatedAt: Date;
+
+  @Prop()
+  securityQuestion1: string;
+
+  @Prop()
+  securityQuestion2: string;
+
+  @Prop()
+  securityAnswer1: string;
+
+  @Prop()
+  securityAnswer2: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

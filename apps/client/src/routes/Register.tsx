@@ -1,7 +1,18 @@
-import React, { useState } from "react";
-import { BsAt, BsKey, BsPerson } from "react-icons/bs";
+import React, { useState, useEffect } from "react";
+import {
+  BsArrowCounterclockwise,
+  BsAt,
+  BsExclamationCircleFill,
+  BsKey,
+  BsPerson,
+} from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
-import {validatePasswords, isPasswordValid, isEmailValid, isInputEmpty} from "../utils/InputValidations"
+import {
+  validatePasswords,
+  isPasswordValid,
+  isEmailValid,
+  isInputEmpty,
+} from "../utils/InputValidations";
 import { useDispatch } from "react-redux";
 import { setError } from "../store/gsms/errorSlice";
 import { IRegisterFormData } from "../Entities/interfaces/register.interface";
@@ -9,60 +20,162 @@ import { emptyRegisterFormData } from "../Entities/defaults/register.empty";
 import { AxiosResponse } from "axios";
 import { registerUser } from "../APIs/Users";
 import { setSuccess } from "../store/gsms/successSlice";
+import { SecurityQuestions } from "../utils/SecurityQuestions";
 
 interface Props {}
 const Register: React.FC<Props> = ({}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [allowEmail, setAllowEmail] = useState<boolean>(true);
-  const [formData, setFormData] = useState<IRegisterFormData>(emptyRegisterFormData);
+  const [formData, setFormData] = useState<IRegisterFormData>(
+    emptyRegisterFormData
+  );
 
-  const handleRegistrationSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const generateRandomQuestions = () => {
+    const randomQuestion1 = Math.floor(
+      Math.random() * SecurityQuestions.length
+    );
+    const randomQuestion2 = Math.floor(
+      Math.random() * SecurityQuestions.length
+    );
+    if (randomQuestion1 === randomQuestion2) {
+      generateRandomQuestions();
+      return;
+    }
+    setFormData({
+      ...formData,
+      securityQuestion1: SecurityQuestions[randomQuestion1],
+      securityQuestion2: SecurityQuestions[randomQuestion2],
+    });
+  };
+  useEffect(() => {
+    //set security questions - each must be unique, use SecurityQuestions array
+    generateRandomQuestions();
+
+    return () => {
+      setFormData(emptyRegisterFormData);
+    };
+  }, []);
+
+  const handleRegistrationSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
-    const passValid:boolean = isPasswordValid(formData.password);
-    if(!passValid){
-      dispatch(setError({
-        message:"Heslo musí obsahovat alespoň 8 znaků, písmeno a číslo!",
-        rawData:"Dobrým příkladem může být heslo 'ed992ske'"
-      }))
+    const passValid: boolean = isPasswordValid(formData.password);
+    if (!passValid) {
+      dispatch(
+        setError({
+          message: "Heslo musí obsahovat alespoň 8 znaků, písmeno a číslo!",
+          rawData: "Dobrým příkladem může být heslo 'ed992ske'",
+        })
+      );
       return;
     }
-    const passMatch:boolean = validatePasswords(formData.password, formData.confirmedPassword);
-    if(!passMatch){
-      dispatch(setError({
-        message:"Hesla se neshodují",
-        rawData:"Zkontrolujte prosím, že obě hesla jsou naprosto stejná!"
-      }))
-      return;
-    }
-
-    const emailValid:boolean = isEmailValid(formData.email);
-    if(!emailValid){
-      dispatch(setError({
-        message:"Email není validní",
-        rawData:"email nesmí obsahovat diakritiku a musí být ve formátu například: huss@richtergedeon.cz"
-      }))
-      return;
-    }
-
-    const inputEmpty:boolean = isInputEmpty(formData.name);
-    if(!inputEmpty){
-      dispatch(setError({
-        message:"Jméno nesmí být prázdné",
-        rawData:"například Bc. Jaroslav Huss, MBA"
-      }))
+    const passMatch: boolean = validatePasswords(
+      formData.password,
+      formData.confirmedPassword
+    );
+    if (!passMatch) {
+      dispatch(
+        setError({
+          message: "Hesla se neshodují",
+          rawData: "Zkontrolujte prosím, že obě hesla jsou naprosto stejná!",
+        })
+      );
       return;
     }
 
-   const response:AxiosResponse = await registerUser(formData);
-   if(response){
-    setFormData(emptyRegisterFormData);
-    navigate("/");
-    dispatch(setSuccess({
-      message:"Registrace proběhla úspěšně",
-      rawData:"Nyní se můžete přihlásit"
-    }))
-   }
+    const emailValid: boolean = isEmailValid(formData.email);
+    if (!emailValid) {
+      dispatch(
+        setError({
+          message: "Email není validní",
+          rawData:
+            "email nesmí obsahovat diakritiku a musí být ve formátu například: huss@richtergedeon.cz",
+        })
+      );
+      return;
+    }
+
+    const inputEmpty: boolean = isInputEmpty(formData.name);
+    if (!inputEmpty) {
+      dispatch(
+        setError({
+          message: "Jméno nesmí být prázdné",
+          rawData: "například Bc. Jaroslav Huss, MBA",
+        })
+      );
+      return;
+    }
+
+    if (
+      formData.securityAnswer1 === null ||
+      formData.securityAnswer2 === undefined
+    ) {
+      dispatch(
+        setError({
+          message: "Odpovědi na bezpečnostní otázky nesmí být prázdné",
+          rawData: "Zvolte prosím jiné odpovědi",
+        })
+      );
+      return;
+    }
+
+    if (
+      formData.securityAnswer2 === null ||
+      formData.securityAnswer2 === undefined
+    ) {
+      dispatch(
+        setError({
+          message: "Odpovědi na bezpečnostní otázky nesmí být prázdné",
+          rawData: "Zvolte prosím jiné odpovědi",
+        })
+      );
+      return;
+    }
+
+    if (formData.securityQuestion1 === formData.securityQuestion2) {
+      dispatch(
+        setError({
+          message:
+            "Došlo k chybě vygenerování otázek, prosím, načtěte znovu okno prohlížeče",
+          rawData: "Zvolte prosím jiné otázky",
+        })
+      );
+      return;
+    }
+
+    if (formData.securityAnswer1 === "" || formData.securityAnswer2 === "") {
+      dispatch(
+        setError({
+          message: "Odpovědi na bezpečnostní otázky nesmí být prázdné",
+          rawData: "Zvolte prosím jiné odpovědi",
+        })
+      );
+      return;
+    }
+
+    if (formData.securityAnswer1 === formData.securityAnswer2) {
+      dispatch(
+        setError({
+          message: "Odpovědi na bezpečnostní otázky nesmí být stejné",
+          rawData: "Zvolte prosím jiné odpovědi",
+        })
+      );
+      return;
+    }
+
+    const response: AxiosResponse = await registerUser(formData);
+    if (response) {
+      setFormData(emptyRegisterFormData);
+      navigate("/");
+      dispatch(
+        setSuccess({
+          message: "Registrace proběhla úspěšně",
+          rawData: "Nyní se můžete přihlásit",
+        })
+      );
+    }
   };
   return (
     <div className="flex flex-col items-center justify-center mt-10">
@@ -71,7 +184,12 @@ const Register: React.FC<Props> = ({}) => {
           Registrace
         </div>
         <div className="mt-8">
-          <form action="#" autoComplete="off" className="relative" onSubmit={handleRegistrationSubmit}>
+          <form
+            action="#"
+            autoComplete="off"
+            className="relative"
+            onSubmit={handleRegistrationSubmit}
+          >
             <div className="flex flex-col mb-2">
               <div className="flex relative ">
                 <span className="rounded-l-md inline-flex items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm">
@@ -100,8 +218,7 @@ const Register: React.FC<Props> = ({}) => {
                       ...formData,
                       email: e.target.value,
                     });
-                  }
-                  }
+                  }}
                 />
               </div>
             </div>
@@ -117,14 +234,13 @@ const Register: React.FC<Props> = ({}) => {
                   className="rounded-r-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400
                 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                   placeholder="Heslo"
-                value={formData?.password}
-                onChange={(e) => {
-                  setFormData({
-                    ...formData,
-                    password: e.target.value,
-                  });
-                }
-                }
+                  value={formData?.password}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      password: e.target.value,
+                    });
+                  }}
                 />
               </div>
             </div>
@@ -139,14 +255,13 @@ const Register: React.FC<Props> = ({}) => {
                   className="rounded-r-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400
                 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                   placeholder="Zopakujte své heslo znovu"
-                value={formData?.confirmedPassword}
-                onChange={(e) => {
-                  setFormData({
-                    ...formData,
-                    confirmedPassword: e.target.value,
-                  });
-                }
-                }
+                  value={formData?.confirmedPassword}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      confirmedPassword: e.target.value,
+                    });
+                  }}
                 />
               </div>
             </div>
@@ -161,14 +276,83 @@ const Register: React.FC<Props> = ({}) => {
                   className="rounded-r-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400
                 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                   placeholder="Vaše celé jméno včetně titulů"
-                value={formData?.name}
-                onChange={(e) => {
-                  setFormData({
-                    ...formData,
-                    name: e.target.value,
-                  });
-                }
-                }
+                  value={formData?.name}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      name: e.target.value,
+                    });
+                  }}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-12 mb-2 mt-10 gap-1 w-full justify-center align-middle">
+              <span className="col-span-10 rounded-l-md inline-flex items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm font-bold">
+                {formData?.securityQuestion1}
+              </span>
+              <div
+                onClick={generateRandomQuestions}
+                className="bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm  col-span-2 p-2 flex justify-center items-center rounded-r-md"
+              >
+                <BsArrowCounterclockwise className=" text-xl" />
+              </div>
+            </div>
+            <div className="flex flex-col mb-2">
+              <div className="flex relative ">
+                <span
+                  className="rounded-l-md inline-flex items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm tooltip"
+                  data-tip="Pokud zapomenete heslo, zeptáme se Vás přímo na tuto otázku a je potřeba, abyste odpověděli stejně!"
+                >
+                  <BsExclamationCircleFill />
+                </span>
+                <input
+                  autoComplete="off"
+                  type="text"
+                  className="rounded-r-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400
+                shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  placeholder="Odpověď na bezpečnostní otázku 1"
+                  value={formData?.securityAnswer1}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      securityAnswer1: e.target.value,
+                    });
+                  }}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-12 mb-2 gap-1 w-full justify-center align-middle">
+              <span className="col-span-10 rounded-l-md inline-flex items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm font-bold">
+                {formData?.securityQuestion2}
+              </span>
+              <div
+                onClick={generateRandomQuestions}
+                className="bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm  col-span-2 p-2 flex justify-center items-center rounded-r-md"
+              >
+                <BsArrowCounterclockwise className=" text-xl" />
+              </div>
+            </div>
+            <div className="flex flex-col mb-2">
+              <div className="flex relative ">
+                <span
+                  className="rounded-l-md inline-flex items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm tooltip"
+                  data-tip="Pokud zapomenete heslo, zeptáme se Vás přímo na tuto otázku a je potřeba, abyste odpověděli stejně!"
+                >
+                  <BsExclamationCircleFill />
+                </span>
+                <input
+                  autoComplete="off"
+                  type="text"
+                  className="rounded-r-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400
+                shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  placeholder="Odpověď na bezpečnostní otázku 1"
+                  value={formData?.securityAnswer2}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      securityAnswer2: e.target.value,
+                    });
+                  }}
                 />
               </div>
             </div>

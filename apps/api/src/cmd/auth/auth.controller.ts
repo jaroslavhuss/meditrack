@@ -13,10 +13,19 @@ import {
   Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthDto, SignUpDto, UserIdDto } from './dto';
+import {
+  AuthDto,
+  SignUpDto,
+  UpdateUserDto,
+  UserIdDto,
+  ForgotPasswordDto_checkEmail,
+  CheckSecurityAnswersDto,
+  ResetPasswordDto,
+} from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AllExceptionsFilter } from 'util/catch-everything.filter';
 import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/schemas';
 
 @Controller('/auth')
 @UseFilters(AllExceptionsFilter)
@@ -47,6 +56,13 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Patch('/udpate/:id')
+  @HttpCode(HttpStatus.OK)
+  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+    return this.authService.updateSelf(id, dto);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get('/self/:id')
   @HttpCode(HttpStatus.OK)
   getSelf(@Param('id') id: string) {
@@ -55,7 +71,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Patch('/self/:id')
   @HttpCode(HttpStatus.OK)
-  updateSelf(@Param('id') id: string, @Body() dto: string) {
+  updateSelf(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.authService.updateSelf(id, dto);
   }
   @UseGuards(AuthGuard('jwt'))
@@ -73,5 +89,32 @@ export class AuthController {
 
     return minutesLeft;
     //@ts-ignore
+  }
+
+  @Post('password-reset')
+  async startPasswordReset(@Body() dto: ForgotPasswordDto_checkEmail): Promise<{
+    email: string;
+    securityQuestion1: string;
+    securityQuestion2: string;
+  }> {
+    console.log(dto);
+    const user = await this.authService.startPasswordReset(dto);
+
+    return user;
+  }
+  //validateSecurityAnswers
+
+  @Post('password-reset/validate')
+  async validateSecurityAnswers(
+    @Body() dto: CheckSecurityAnswersDto,
+  ): Promise<User> {
+    const user = await this.authService.validateSecurityAnswers(dto);
+    return user;
+  }
+
+  @Post('password-reset/reset')
+  async resetPassword(@Body() dto: ResetPasswordDto): Promise<any> {
+    const user = await this.authService.resetPassword(dto);
+    return user;
   }
 }

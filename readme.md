@@ -6,6 +6,8 @@ Aplikace sbírá a zobrazuje data o stavu pacientů.
 
 1. Pro instalaci je potřeba mít nainstalovaný [Node.js](https://nodejs.org/en/)
 2. Aplikace používá dokumentovou databázi MongoDB. MongoDB lze mít nainstalovaný lokálně (https://www.mongodb.com/docs/manual/installation/) nebo pomocí Dockeru (https://hub.docker.com/_/mongo/)
+3. [Dobrovolné] Pro instalaci je potřeba mít nainstalovaný [Git](https://git-scm.com/downloads)
+4. [Dobrovolné] Pro instalaci je potřeba mít nainstalovaný [PM2](https://pm2.keymetrics.io/)
 
 ## Instalace
 
@@ -41,6 +43,13 @@ Pokud se vyskytnou problémy, můžete vytvořit issue v tomto repozitáři. Tak
 
 Závislosti aplikace jsou zkontrolovány pomocí `npm audit`. Výsledek kontroly je na obrázku níže.
 ![Zranitelnost aplikace](npm_audit.png "Zranitelnost aplikace")
+
+## Jak aplikaci aktualizovat
+
+1. Stáhněte poslední aktulizace pomocí `git pull`.
+2. Aplikaci opět sestavte pomocí `npm run full`.
+3. Pokud používáte [PM2](https://pm2.keymetrics.io/), restartujte aplikaci pomocí `pm2 restart healthtracker:5006`.
+4. Pokud nepoužíváte [PM2](https://pm2.keymetrics.io/), restartujte aplikaci pomocí `node main.js`.
 
 ## Licence
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BsAt, BsKey } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
-import { setSuccess } from "../store/gsms/successSlice";
+
 import { useDispatch } from "react-redux";
 import { emptyLoginFormData } from "../Entities/defaults/login.empty";
 import { loginUser } from "../APIs/Users";
@@ -9,6 +9,7 @@ import { isEmailValid, isPasswordValid } from "../utils/InputValidations";
 import { setError } from "../store/gsms/errorSlice";
 
 import useSignIn from "react-auth-kit/hooks/useSignIn";
+import PasswordRenewal from "../components/GlobalComponents/PasswordRenewal";
 
 interface Props {}
 
@@ -17,15 +18,8 @@ const Login: React.FC<Props> = () => {
   const signIn = useSignIn();
   const [formData, setformData] = useState(emptyLoginFormData);
   const navigate = useNavigate();
-  const forgottenPassword: Function = (): void => {
-    dispatch(
-      setSuccess({
-        message:
-          "Pokud jste zapomněli heslo, je potřeba kvůli zabezpečení kontaktovat správce aplikace",
-        rawData: "Bohužel si kvůli zabezpečení heslo změnit nelze...",
-      })
-    );
-  };
+  const [triggerPasswordRenewalProcess, setTriggerPasswordRenewalProcess] =
+    useState<boolean>(false);
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -127,7 +121,7 @@ const Login: React.FC<Props> = () => {
               <div className="flex ml-auto">
                 <div
                   onClick={() => {
-                    forgottenPassword();
+                    setTriggerPasswordRenewalProcess(true);
                   }}
                   className="inline-flex text-xs font-thin text-white sm:text-sm dark:text-gray-100 hover:text-gray-700 dark:hover:text-white"
                 >
@@ -157,6 +151,7 @@ const Login: React.FC<Props> = () => {
           </form>
         </div>
       </div>
+      {triggerPasswordRenewalProcess && <PasswordRenewal />}
     </div>
   );
 };

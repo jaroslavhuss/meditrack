@@ -5,6 +5,7 @@ import {
   MaxLength,
   MinLength,
   Matches,
+  IsOptional,
 } from 'class-validator';
 
 export class AuthDto {
@@ -60,10 +61,87 @@ export class SignUpDto {
   @IsString({ message: 'Name must be a text!' })
   @IsNotEmpty({ message: 'Name is mandatory!' })
   name: string;
+
+  @IsString({ message: 'Security question must be a text!' })
+  @IsNotEmpty({ message: 'Security question is mandatory!' })
+  securityQuestion1: string;
+
+  @IsString({ message: 'Security question must be a text!' })
+  @IsNotEmpty({ message: 'Security question is mandatory!' })
+  securityQuestion2: string;
+
+  @IsString({ message: 'Security answer must be a text!' })
+  @IsNotEmpty({ message: 'Security answer is mandatory!' })
+  securityAnswer1: string;
+
+  @IsString({ message: 'Security answer must be a text!' })
+  @IsNotEmpty({ message: 'Security answer is mandatory!' })
+  securityAnswer2: string;
 }
 
 export class UserIdDto {
   @IsString()
   @IsNotEmpty()
   id: string;
+}
+
+export class UpdateUserDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @IsOptional()
+  oldPassword?: string;
+
+  @IsOptional()
+  newPassword?: string;
+
+  @IsOptional()
+  confirmedNewPassword?: string;
+}
+
+export class ForgotPasswordDto_checkEmail {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+}
+
+export class CheckSecurityAnswersDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  securityAnswer1: string;
+
+  @IsString()
+  @IsNotEmpty()
+  securityAnswer2: string;
+}
+
+export class ResetPasswordDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  newPassword: string;
+
+  @IsString()
+  @IsNotEmpty()
+  confirmedNewPassword: string;
+
+  @IsString()
+  @IsNotEmpty()
+  securityAnswer1: string;
+
+  @IsString()
+  @IsNotEmpty()
+  securityAnswer2: string;
 }
