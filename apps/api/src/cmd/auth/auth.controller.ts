@@ -20,12 +20,10 @@ import {
   UserIdDto,
   ForgotPasswordDto_checkEmail,
   CheckSecurityAnswersDto,
-  ResetPasswordDto,
 } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AllExceptionsFilter } from 'util/catch-everything.filter';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/schemas';
 
 @Controller('/auth')
 @UseFilters(AllExceptionsFilter)
@@ -45,6 +43,26 @@ export class AuthController {
   async signin(@Body() dto: AuthDto) {
     const { user, tokens } = await this.authService.signin(dto);
     return { user, tokens };
+  }
+
+  @Post('/password-reset')
+  @HttpCode(HttpStatus.OK)
+  async startPasswordReset(@Body() dto: ForgotPasswordDto_checkEmail): Promise<{
+    email: string;
+    securityQuestion1: string;
+    securityQuestion2: string;
+  }> {
+    const user = await this.authService.startPasswordReset(dto);
+    return user;
+  }
+  //validateSecurityAnswers
+
+  @Post('/password-reset/validate')
+  async validateSecurityAnswers(
+    @Body() dto: CheckSecurityAnswersDto,
+  ): Promise<any> {
+    const password = await this.authService.validateSecurityAnswers(dto);
+    return { password };
   }
 
   //Only logged user can call this - we need ID of the current user!
@@ -89,32 +107,5 @@ export class AuthController {
 
     return minutesLeft;
     //@ts-ignore
-  }
-
-  @Post('password-reset')
-  async startPasswordReset(@Body() dto: ForgotPasswordDto_checkEmail): Promise<{
-    email: string;
-    securityQuestion1: string;
-    securityQuestion2: string;
-  }> {
-    console.log(dto);
-    const user = await this.authService.startPasswordReset(dto);
-
-    return user;
-  }
-  //validateSecurityAnswers
-
-  @Post('password-reset/validate')
-  async validateSecurityAnswers(
-    @Body() dto: CheckSecurityAnswersDto,
-  ): Promise<User> {
-    const user = await this.authService.validateSecurityAnswers(dto);
-    return user;
-  }
-
-  @Post('password-reset/reset')
-  async resetPassword(@Body() dto: ResetPasswordDto): Promise<any> {
-    const user = await this.authService.resetPassword(dto);
-    return user;
   }
 }

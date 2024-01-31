@@ -10,7 +10,6 @@ import {
   UpdateUserDto,
   ForgotPasswordDto_checkEmail,
   CheckSecurityAnswersDto,
-  ResetPasswordDto,
 } from './dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
@@ -214,8 +213,12 @@ export class AuthService {
     };
   }
 
-  async validateSecurityAnswers(dto: CheckSecurityAnswersDto): Promise<User> {
-    const user = await this.userModel.findOne({ email: dto.email });
+  async validateSecurityAnswers(dto: CheckSecurityAnswersDto): Promise<string> {
+    //Get user but remove password property
+
+    const user = await this.userModel
+      .findOne({ email: dto.email })
+      .select('-password');
 
     if (!user) throw new BadRequestException('Uživatel neexistuje');
 
@@ -232,36 +235,16 @@ export class AuthService {
         'Špatné odpovědi na bezpečnostní otázky. Je nám líto, ale musíte kontaktovat svého správce aplikace pro obnovení hesla.',
       );
 
-    return user;
-  }
+    //For user generate a new random password, update it in the database and send it to the user's email
 
-  async resetPassword(dto: ResetPasswordDto): Promise<any> {
-    const user = await this.userModel.findOne({ email: dto.email });
-    if (!user) throw new BadRequestException('Uživatel neexistuje');
-    if (!user.securityQuestion1 || !user.securityQuestion2)
-      throw new BadRequestException(
-        'Uživatel nemá nastavené bezpečnostní otázky',
-      );
+    const newPassword = Math.random().toString(36).slice(-8);
 
-    if (
-      user.securityAnswer1 !== dto.securityAnswer1 ||
-      user.securityAnswer2 !== dto.securityAnswer2
-    )
-      throw new BadRequestException(
-        'Špatné odpovědi na bezpečnostní otázky. Je nám líto, ale musíte kontaktovat svého správce aplikace pro obnovení hesla.',
-      );
+    const hashedPwd = await argon.hash(newPassword);
 
-    if (dto.newPassword !== dto.confirmedNewPassword)
-      throw new BadRequestException('Hesla se neshodují');
+    await this.userModel.findByIdAndUpdate(user._id, {
+      password: hashedPwd,
+    });
 
-    const hashedPwd = await argon.hash(dto.newPassword);
-
-    const updatedUser = await this.userModel.findByIdAndUpdate(
-      user.id,
-      { password: hashedPwd },
-      { new: true },
-    );
-
-    return updatedUser;
+    return newPassword;
   }
 }

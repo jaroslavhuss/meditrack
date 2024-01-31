@@ -278,13 +278,14 @@ export const startPasswordReset = async (email: string) => {
       GLOBAL_URL + "/auth/password-reset",
       {
         method: "POST",
-        body: JSON.stringify({ email: email }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
       }
     );
 
     const data = await response.json();
-
-    console.log(data);
     return data;
   } catch (error: any) {
     const errorMessage = formatErrorMessage(error);
@@ -302,6 +303,9 @@ export const validateSecurityAnswers = async (
       GLOBAL_URL + "/auth/password-reset/validate",
       {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, securityAnswer1, securityAnswer2 }),
       }
     );
@@ -325,6 +329,9 @@ export const resetPassword = async (
       GLOBAL_URL + "/auth/password-reset/reset",
       {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           email,
           securityAnswer1,

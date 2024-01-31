@@ -12,4 +12,8 @@ export const emptyUser: IUser = {
   updatedAt: new Date(),
 
   isUserApproved: false,
+
+  oldPassword: "",
+  newPassword: "",
+  confirmedNewPassword: "",
 };

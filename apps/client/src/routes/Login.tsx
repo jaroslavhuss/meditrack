@@ -151,7 +151,13 @@ const Login: React.FC<Props> = () => {
           </form>
         </div>
       </div>
-      {triggerPasswordRenewalProcess && <PasswordRenewal />}
+      {triggerPasswordRenewalProcess && (
+        <PasswordRenewal
+          turnOff={() => {
+            setTriggerPasswordRenewalProcess(false);
+          }}
+        />
+      )}
     </div>
   );
 };
