@@ -9,6 +9,10 @@ Aplikace sbírá a zobrazuje data o stavu pacientů.
 3. [Dobrovolné] Pro instalaci je potřeba mít nainstalovaný [Git](https://git-scm.com/downloads)
 4. [Dobrovolné] Pro instalaci je potřeba mít nainstalovaný [PM2](https://pm2.keymetrics.io/)
 
+## Instalace [VIDEO]
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nHOW_95EQ6c?si=C1PCBfUqUpDnziEu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Instalace
 
 1. Stáhněte si zdrojové kódy pomocí `git clone https://github.com/jaroslavhuss/meditrack` nebo si stáhněte zip soubor z [Repozitáře](https://github.com/jaroslavhuss/meditrack)
