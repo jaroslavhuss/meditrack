@@ -2,6 +2,11 @@
 
 Aplikace sbírá a zobrazuje data o stavu pacientů.
 
+## Použité technologie
+API: Nestjs [Nest.js](https://nestjs.com/)
+CLIENT: React [React](https://reactjs.org/)
+DB: MongoDB [MongoDB](https://www.mongodb.com/)
+
 ## Požadavky před instalací
 
 1. Pro instalaci je potřeba mít nainstalovaný [Node.js](https://nodejs.org/en/)
@@ -63,18 +68,12 @@ npm run full
 
 Pokud se vyskytnou problémy, můžete vytvořit issue v tomto repozitáři. Také mě můžete kontaktovat na emailu jaroslav.huss@gmail.com
 
-## npm audit
-
-Závislosti aplikace jsou zkontrolovány pomocí `npm audit`. Výsledek kontroly je na obrázku níže.
-
-![Zranitelnost aplikace](npm_audit.png "Zranitelnost aplikace")
-
 ## Jak aplikaci aktualizovat
 
 1. Stáhněte poslední aktulizace pomocí `git pull`.
 2. Aplikaci opět sestavte pomocí `npm run full`.
 3. Pokud používáte [PM2](https://pm2.keymetrics.io/), restartujte aplikaci pomocí `pm2 restart healthtracker:5006`.
-4. Pokud nepoužíváte [PM2](https://pm2.keymetrics.io/), restartujte aplikaci pomocí `node main.js`.
+4. Pokud nepoužíváte [PM2](https://pm2.keymetrics.io/), restartujte aplikaci a spusťte znovu pomocí `node main.js`.
 
 ## Licence
 
