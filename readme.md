@@ -1,11 +1,19 @@
 # O aplikaci
 
-Aplikace sbírá a zobrazuje data o stavu pacientů.
+Aplikace sbírá a zobrazuje data o stavu pacientů. Jedná se o webovou aplikaci, která je rozdělena to tří vrstev:
+
+- Server (API)
+- Frontend (Client)
+- Databáze (MongoDB)
+
+Tato aplikace je navržena pro izolovaný provoz na privátní síti. Autor aplikace nenese žádnou odpovědnost za škody způsobené použitím této aplikace. Administrátor aplikace je zodpovědný za správné nastavení a bezpečný provoz aplikace.
+
+Aplikace je vydána jako Open Source a kdokoliv může aplikaci používat, upravovat a šířit dále. Více informací o licenci naleznete v části LICENSE.
 
 ## Použité technologie
-API: Nestjs [Nest.js](https://nestjs.com/)
-CLIENT: React [React](https://reactjs.org/)
-DB: MongoDB [MongoDB](https://www.mongodb.com/)
+- API: Nestjs [Nest.js](https://nestjs.com/)
+- CLIENT: React [React](https://reactjs.org/)
+- DB: MongoDB [MongoDB](https://www.mongodb.com/)
 
 ## Požadavky před instalací
 
