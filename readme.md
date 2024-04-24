@@ -11,7 +11,7 @@ Aplikace sbírá a zobrazuje data o stavu pacientů.
 
 ## Instalace
 
-1. Stáhněte si zdrojové kódy pomocí `git clone https://github.com/jaroslavhuss/healthtracker` nebo si stáhněte zip soubor z [Repozitáře](https://github.com/jaroslavhuss/healthtracker)
+1. Stáhněte si zdrojové kódy pomocí `git clone https://github.com/jaroslavhuss/meditrack` nebo si stáhněte zip soubor z [Repozitáře](https://github.com/jaroslavhuss/meditrack)
 2. Přejděte do složky /apps/settings a zde vytvořte soubor .env s následujícím obsahem:
 
 ```bash
@@ -25,15 +25,35 @@ PORT = 5006 # Zde můžete nastavit port, na kterém bude aplikace běžet. Defa
 
 Berte prosím za nesmírně důležité změnu hodnot u JWT_SECRET a JWT_REFRESH_SECRET. Tyto hodnoty jsou použity pro šifrování a dešifrování JWT tokenů. Hodnoty můžete vygenerovat pomocí `openssl rand -hex 40`.
 
-3. Vraťte se zpět do kořenové složky a aplikaci sestavte pomocí `npm run full`
+3. Vraťte se zpět do kořenové složky a nainstalujte buildovací systém Turbo, který aplikaci sestaví: 
+```
+npm install turbo --global 
+```
+Po instalaci Turba stačí už jen zadat: 
+```
+npm run full
+```
 
-- Pokud se vyskytnou nějaké potíže s `npm run full`, postupujte následovně:
+- Pokud se vyskytnou nějaké potíže s ```npm run full```, postupujte následovně:
   - `npm run installation`
   - `npm run build`
   - `npm run finish`
 
-4. Přejděte do složky se sestavenou aplikací `cd ./apps/api/dist/src`
-5. Spusťte aplikaci pomocí `node main.js` nebo ideální pomocí [PM2](https://pm2.keymetrics.io/) - `pm2 start main.js --name healthtracker:5006`
+
+## Testový a produkční start aplikace
+
+1. Přejděte do složky se sestavenou aplikací `cd ./apps/api/dist/src`
+2. Spusťte aplikaci pomocí `node main.js` a na příslušném portu aplikaci otestujte (defaultně je http://localhost:5006)
+3. pokud aplikace funguje bez prolbémů:
+ - Ujistěte se, že máte [PM2](https://pm2.keymetrics.io/)
+ - pomocí PM2 spuštte main.js
+ ```
+ pm2 start main.js --name "Jmeno aplikace"
+ ```
+ - běh aplikace pak můžete zkontrolovat pomocí 
+ ```
+ pm2 list
+ ```
 
 ## Pokud se vyskytnou problémy
 
@@ -42,6 +62,7 @@ Pokud se vyskytnou problémy, můžete vytvořit issue v tomto repozitáři. Tak
 ## npm audit
 
 Závislosti aplikace jsou zkontrolovány pomocí `npm audit`. Výsledek kontroly je na obrázku níže.
+
 ![Zranitelnost aplikace](npm_audit.png "Zranitelnost aplikace")
 
 ## Jak aplikaci aktualizovat
